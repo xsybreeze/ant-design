@@ -201,24 +201,24 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
   beforeUpload = (file: RcFile, fileList: RcFile[]) => {
     const { beforeUpload } = this.props;
-    const { fileList: stateFileList } = this.state;
+    // const { fileList: stateFileList } = this.state;
     if (!beforeUpload) {
       return true;
     }
     const result = beforeUpload(file, fileList);
     if (result === false) {
-      // Get unique file list
-      const uniqueList: UploadFile<any>[] = [];
-      stateFileList.concat(fileList.map(fileToObject)).forEach(f => {
-        if (uniqueList.every(uf => uf.uid !== f.uid)) {
-          uniqueList.push(f);
-        }
-      });
+      // // Get unique file list
+      // const uniqueList: UploadFile<any>[] = [];
+      // stateFileList.concat(fileList.map(fileToObject)).forEach(f => {
+      //   if (uniqueList.every(uf => uf.uid !== f.uid)) {
+      //     uniqueList.push(f);
+      //   }
+      // });
 
-      this.onChange({
-        file,
-        fileList: uniqueList,
-      });
+      // this.onChange({
+      //   file,
+      //   fileList: uniqueList,
+      // });
       return false;
     }
     if (result && (result as PromiseLike<any>).then) {

@@ -1,7 +1,7 @@
 {
   "name": "xsy-breeze-ui-comp",
-  "version": "4.1.3",
-  "description": "An enterprise-class UI design language and React components implementation",
+  "version": "0.4.3",
+  "description": "XSY breeze ui components",
   "keywords": [
     "ant",
     "component",
@@ -13,7 +13,7 @@
     "react-component",
     "ui"
   ],
-  "homepage": "http://ant.design/",
+  "homepage": "http://www.xiaoshouyi.com/",
   "bugs": {
     "url": "https://github.com/ant-design/ant-design/issues"
   },
