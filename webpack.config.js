@@ -19,6 +19,8 @@ function addLocales(webpackConfig) {
   let packageName = 'antd-with-locales';
   if (webpackConfig.entry['antd.min']) {
     packageName += '.min';
+  } else if (webpackConfig.entry['xsy-breeze-ui-comp.min']) {
+    packageName = 'xsy-breeze-ui-comp-with-locales.min';
   }
   webpackConfig.entry[packageName] = './index-with-locales.js';
   webpackConfig.output.filename = '[name].js';
@@ -40,7 +42,11 @@ function processWebpackThemeConfig(themeConfig, theme, vars) {
 
     // rename default entry to ${theme} entry
     Object.keys(config.entry).forEach(entryName => {
-      config.entry[entryName.replace('antd', `antd.${theme}`)] = config.entry[entryName];
+      config.entry[
+        entryName
+          .replace('antd', `antd.${theme}`)
+          .replace('xsy-breeze-ui-comp', 'xsy-breeze-ui-comp.dark')
+      ] = config.entry[entryName];
       delete config.entry[entryName];
     });
 
