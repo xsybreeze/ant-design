@@ -5,7 +5,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import Table from '..';
 import scrollTo from '../../_util/scrollTo';
-import { resetWarned } from '../../_util/warning';
+import { resetWarned } from '../../_util/devWarning';
 
 describe('Table.pagination', () => {
   const columns = [
@@ -35,6 +35,12 @@ describe('Table.pagination', () => {
   it('renders pagination correctly', () => {
     const wrapper = mount(createTable());
     expect(wrapper.render()).toMatchSnapshot();
+  });
+
+  it('not crash when pageSize is undefined', () => {
+    expect(() => {
+      mount(createTable({ pagination: { pageSIze: undefined } }));
+    }).not.toThrow();
   });
 
   it('should not show pager if pagination.hideOnSinglePage is true and only 1 page', () => {

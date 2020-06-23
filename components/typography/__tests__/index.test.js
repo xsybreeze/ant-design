@@ -3,6 +3,7 @@ import { mount } from 'enzyme';
 import KeyCode from 'rc-util/lib/KeyCode';
 import copy from 'copy-to-clipboard';
 import Title from '../Title';
+import Link from '../Link';
 import Paragraph from '../Paragraph';
 import Base from '../Base'; // eslint-disable-line import/no-named-as-default
 import mountTest from '../../../tests/shared/mountTest';
@@ -16,10 +17,12 @@ describe('Typography', () => {
   mountTest(Paragraph);
   mountTest(Base);
   mountTest(Title);
+  mountTest(Link);
 
   rtlTest(Paragraph);
   rtlTest(Base);
   rtlTest(Title);
+  rtlTest(Link);
 
   const LINE_STR_COUNT = 20;
   const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -61,7 +64,7 @@ describe('Typography', () => {
       mount(<Title level={false} />);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        'Warning: Title only accept `1 | 2 | 3 | 4` as `level` value.',
+        'Warning: [antd: Typography.Title] Title only accept `1 | 2 | 3 | 4` as `level` value.',
       );
     });
   });
@@ -72,8 +75,9 @@ describe('Typography', () => {
         'Bamboo is Little Light Bamboo is Little Light Bamboo is Little Light Bamboo is Little Light Bamboo is Little Light';
 
       it('should trigger update', async () => {
+        const onEllipsis = jest.fn();
         const wrapper = mount(
-          <Base ellipsis component="p" editable>
+          <Base ellipsis={{ onEllipsis }} component="p" editable>
             {fullStr}
           </Base>,
         );
@@ -81,18 +85,22 @@ describe('Typography', () => {
         await sleep(20);
         wrapper.update();
         expect(wrapper.find('span:not(.anticon)').text()).toEqual('Bamboo is Little ...');
+        expect(onEllipsis).toHaveBeenCalledWith(true);
+        onEllipsis.mockReset();
 
-        wrapper.setProps({ ellipsis: { rows: 2 } });
+        wrapper.setProps({ ellipsis: { rows: 2, onEllipsis } });
         await sleep(20);
         wrapper.update();
         expect(wrapper.find('span:not(.anticon)').text()).toEqual(
           'Bamboo is Little Light Bamboo is Litt...',
         );
+        expect(onEllipsis).not.toHaveBeenCalled();
 
-        wrapper.setProps({ ellipsis: { rows: 99 } });
+        wrapper.setProps({ ellipsis: { rows: 99, onEllipsis } });
         await sleep(20);
         wrapper.update();
         expect(wrapper.find('p').text()).toEqual(fullStr);
+        expect(onEllipsis).toHaveBeenCalledWith(false);
 
         wrapper.unmount();
       });
@@ -174,6 +182,20 @@ describe('Typography', () => {
         expect(wrapper.find('p').text()).toEqual(fullStr);
       });
 
+      it('should have custom expand style', async () => {
+        const symbol = 'more';
+        const wrapper = mount(
+          <Base ellipsis={{ expandable: true, symbol }} component="p">
+            {fullStr}
+          </Base>,
+        );
+
+        await sleep(20);
+        wrapper.update();
+
+        expect(wrapper.find('.ant-typography-expand').text()).toEqual('more');
+      });
+
       it('can use css ellipsis', () => {
         const wrapper = mount(<Base ellipsis component="p" />);
         expect(wrapper.find('.ant-typography-ellipsis-single-line').length).toBeTruthy();
@@ -191,10 +213,7 @@ describe('Typography', () => {
             </Base>,
           );
 
-          wrapper
-            .find('.ant-typography-copy')
-            .first()
-            .simulate('click');
+          wrapper.find('.ant-typography-copy').first().simulate('click');
           expect(copy.lastStr).toEqual(target);
 
           wrapper.update();
@@ -230,10 +249,7 @@ describe('Typography', () => {
             </Paragraph>,
           );
 
-          wrapper
-            .find('.ant-typography-edit')
-            .first()
-            .simulate('click');
+          wrapper.find('.ant-typography-edit').first().simulate('click');
 
           expect(onStart).toHaveBeenCalled();
 
@@ -288,10 +304,7 @@ describe('Typography', () => {
 
     it('should focus at the end of textarea', () => {
       const wrapper = mount(<Paragraph editable>content</Paragraph>);
-      wrapper
-        .find('.ant-typography-edit')
-        .first()
-        .simulate('click');
+      wrapper.find('.ant-typography-edit').first().simulate('click');
       const textareaNode = wrapper.find('textarea').getDOMNode();
       expect(textareaNode.selectionStart).toBe(7);
       expect(textareaNode.selectionEnd).toBe(7);

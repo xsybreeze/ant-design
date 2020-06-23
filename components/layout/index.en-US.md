@@ -3,6 +3,7 @@ category: Components
 type: Layout
 cols: 1
 title: Layout
+cover: https://gw.alipayobjects.com/zos/alicdn/hzEndUVEx/Layout.svg
 ---
 
 Handling the overall layout of a page.
@@ -77,7 +78,7 @@ The wrapper.
 | --- | --- | --- | --- |
 | className | container className | string | - |
 | hasSider | whether contain Sider in children, don't have to assign it normally. Useful in ssr avoid style flickering | boolean | - |
-| style | to customize the styles | object | - |
+| style | to customize the styles | CSSProperties | - |
 
 > APIs of `Layout.Header` `Layout.Footer` `Layout.Content` are the same as that of `Layout`.
 
@@ -87,19 +88,19 @@ The sidebar.
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
-| breakpoint | [breakpoints](/components/grid#Col) of the responsive layout | `xs` \| `sm` \| `md` \| `lg` \| `xl` \| `xxl` } | - |
+| breakpoint | [breakpoints](/components/grid/#Col) of the responsive layout | `xs` \| `sm` \| `md` \| `lg` \| `xl` \| `xxl` } | - |
 | className | container className | string | - |
 | collapsed | to set the current status | boolean | - |
 | collapsedWidth | width of the collapsed sidebar, by setting to `0` a special trigger will appear | number | 80 |
 | collapsible | whether can be collapsed | boolean | false |
 | defaultCollapsed | to set the initial status | boolean | false |
 | reverseArrow | reverse direction of arrow, for a sider that expands from the right | boolean | false |
-| style | to customize the styles | object | - |
+| style | to customize the styles | CSSProperties | - |
 | theme | color theme of the sidebar | `light` \| `dark` | `dark` |
 | trigger | specify the customized trigger, set to null to hide the trigger | string\|ReactNode | - |
 | width | width of the sidebar | number\|string | 200 |
 | onCollapse | the callback function, executed by clicking the trigger or activating the responsive layout | (collapsed, type) => {} | - |
-| onBreakpoint | the callback function, executed when [breakpoints](/components/grid#API) changed | (broken) => {} | - |
+| onBreakpoint | the callback function, executed when [breakpoints](/components/grid/#API) changed | (broken) => {} | - |
 | zeroWidthTriggerStyle | to customize the styles of the special trigger that appears when `collapsedWidth` is 0 | object | - |
 
 #### breakpoint width

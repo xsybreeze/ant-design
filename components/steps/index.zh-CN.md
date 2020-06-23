@@ -4,6 +4,7 @@ subtitle: 步骤条
 type: 导航
 cols: 1
 title: Steps
+cover: https://gw.alipayobjects.com/zos/antfincdn/UZYqMizXHaj/Steps.svg
 ---
 
 引导用户按照流程完成任务的导航条。
@@ -47,7 +48,7 @@ title: Steps
 | --- | --- | --- | --- | --- |
 | description | 步骤的详情描述，可选 | string\|ReactNode | - |  |
 | icon | 步骤图标的类型，可选 | ReactNode | - |  |
-| status | 指定状态。当不配置该属性时，会使用 Steps 的 `current` 来自动指定状态。可选：`wait` `process` `finish` `error` | string | wait |  |
+| status | 指定状态。当不配置该属性时，会使用 Steps 的 `current` 来自动指定状态。可选：`wait` `process` `finish` `error` | string | `wait` |  |
 | title | 标题 | string\|ReactNode | - |  |
 | subTitle | 子标题 | string\|ReactNode | - |  |
 | disabled | 禁用点击 | boolean | false |  |

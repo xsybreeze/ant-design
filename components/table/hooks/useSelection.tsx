@@ -1,11 +1,12 @@
 import * as React from 'react';
 import DownOutlined from '@ant-design/icons/DownOutlined';
+import { INTERNAL_COL_DEFINE } from 'rc-table';
 import { FixedType } from 'rc-table/lib/interface';
 import Checkbox, { CheckboxProps } from '../../checkbox';
 import Dropdown from '../../dropdown';
 import Menu from '../../menu';
 import Radio from '../../radio';
-import warning from '../../_util/warning';
+import devWarning from '../../_util/devWarning';
 import {
   TableRowSelection,
   Key,
@@ -21,8 +22,8 @@ import {
 const EMPTY_LIST: any[] = [];
 
 // TODO: warning if use ajax!!!
-export const SELECTION_ALL = 'SELECT_ALL';
-export const SELECTION_INVERT = 'SELECT_INVERT';
+export const SELECTION_ALL = 'SELECT_ALL' as const;
+export const SELECTION_INVERT = 'SELECT_INVERT' as const;
 
 function getFixedType<RecordType>(column: ColumnsType<RecordType>[number]): FixedType | undefined {
   return column && column.fixed;
@@ -41,7 +42,10 @@ interface UseSelectionConfig<RecordType> {
   getPopupContainer?: GetPopupContainer;
 }
 
-type INTERNAL_SELECTION_ITEM = SelectionItem | typeof SELECTION_ALL | typeof SELECTION_INVERT;
+export type INTERNAL_SELECTION_ITEM =
+  | SelectionItem
+  | typeof SELECTION_ALL
+  | typeof SELECTION_INVERT;
 
 function flattenData<RecordType>(
   data: RecordType[] | undefined,
@@ -74,11 +78,12 @@ export default function useSelection<RecordType>(
     onSelectAll,
     onSelectInvert,
     onSelectMultiple,
-    columnWidth: selectionColWidth = 60,
+    columnWidth: selectionColWidth,
     type: selectionType,
     selections,
     fixed,
     renderCell: customizeRenderCell,
+    hideSelectAll,
   } = rowSelection || {};
 
   const {
@@ -113,12 +118,21 @@ export default function useSelection<RecordType>(
 
   const setSelectedKeys = React.useCallback(
     (keys: Key[]) => {
-      setInnerSelectedKeys(keys);
+      const availableKeys: Key[] = [];
+      const records: RecordType[] = [];
 
-      const records = keys.map(key => getRecordByKey(key));
+      keys.forEach(key => {
+        const record = getRecordByKey(key);
+        if (record !== undefined) {
+          availableKeys.push(key);
+          records.push(record);
+        }
+      });
+
+      setInnerSelectedKeys(availableKeys);
 
       if (onSelectionChange) {
-        onSelectionChange(keys, records);
+        onSelectionChange(availableKeys, records);
       }
     },
     [setInnerSelectedKeys, getRecordByKey, onSelectionChange],
@@ -138,7 +152,7 @@ export default function useSelection<RecordType>(
   );
 
   const mergedSelections = React.useMemo<SelectionItem[] | null>(() => {
-    if (!selections) {
+    if (!selections || hideSelectAll) {
       return null;
     }
 
@@ -174,7 +188,7 @@ export default function useSelection<RecordType>(
             const keys = Array.from(keySet);
             setSelectedKeys(keys);
             if (onSelectInvert) {
-              warning(
+              devWarning(
                 false,
                 'Table',
                 '`onSelectInvert` will be removed in future. Please use `onChange` instead.',
@@ -211,7 +225,7 @@ export default function useSelection<RecordType>(
           process.env.NODE_ENV !== 'production' &&
           ('checked' in checkboxProps || 'defaultChecked' in checkboxProps)
         ) {
-          warning(
+          devWarning(
             false,
             'Table',
             'Do not set `checked` or `defaultChecked` in `getCheckboxProps`. Please use `selectedRowKeys` instead.',
@@ -295,7 +309,7 @@ export default function useSelection<RecordType>(
           return checkboxProps.disabled;
         });
 
-        title = (
+        title = !hideSelectAll && (
           <div className={`${prefixCls}-selection`}>
             <Checkbox
               checked={!allDisabled && !!flattedData.length && checkedCurrentAll}
@@ -437,6 +451,9 @@ export default function useSelection<RecordType>(
         className: `${prefixCls}-selection-column`,
         title: rowSelection.columnTitle || title,
         render: renderSelectionCell,
+        [INTERNAL_COL_DEFINE]: {
+          className: `${prefixCls}-selection-col`,
+        },
       };
 
       if (expandType === 'row' && columns.length && !expandIconColumnIndex) {

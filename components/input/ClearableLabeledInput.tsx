@@ -4,6 +4,7 @@ import CloseCircleFilled from '@ant-design/icons/CloseCircleFilled';
 import { tuple } from '../_util/type';
 import { InputProps, getInputClassName } from './Input';
 import { SizeType } from '../config-provider/SizeContext';
+import { cloneElement } from '../_util/reactNode';
 
 const ClearableInputType = tuple('text', 'input');
 
@@ -19,7 +20,7 @@ interface BasicProps {
   inputType: typeof ClearableInputType[number];
   value?: any;
   allowClear?: boolean;
-  element: React.ReactElement<any>;
+  element: React.ReactElement;
   handleReset: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   className?: string;
   style?: object;
@@ -88,7 +89,7 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
     return null;
   }
 
-  renderLabeledIcon(prefixCls: string, element: React.ReactElement<any>) {
+  renderLabeledIcon(prefixCls: string, element: React.ReactElement) {
     const {
       focused,
       value,
@@ -100,10 +101,11 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
       allowClear,
       direction,
       style,
+      readOnly,
     } = this.props;
     const suffixNode = this.renderSuffix(prefixCls);
     if (!hasPrefixSuffix(this.props)) {
-      return React.cloneElement(element, {
+      return cloneElement(element, {
         value,
       });
     }
@@ -117,6 +119,7 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
       [`${prefixCls}-affix-wrapper-lg`]: size === 'large',
       [`${prefixCls}-affix-wrapper-input-with-clear-btn`]: suffix && allowClear && value,
       [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl',
+      [`${prefixCls}-affix-wrapper-readonly`]: readOnly,
     });
     return (
       <span
@@ -126,7 +129,7 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
         onMouseUp={this.onInputMouseUp}
       >
         {prefixNode}
-        {React.cloneElement(element, {
+        {cloneElement(element, {
           style: null,
           value,
           className: getInputClassName(prefixCls, size, disabled),
@@ -136,7 +139,7 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
     );
   }
 
-  renderInputWithLabel(prefixCls: string, labeledElement: React.ReactElement<any>) {
+  renderInputWithLabel(prefixCls: string, labeledElement: React.ReactElement) {
     const { addonBefore, addonAfter, style, size, className, direction } = this.props;
     // Not wrap when there is not addons
     if (!addonBefore && !addonAfter) {
@@ -167,28 +170,29 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
       <span className={mergedGroupClassName} style={style}>
         <span className={mergedWrapperClassName}>
           {addonBeforeNode}
-          {React.cloneElement(labeledElement, { style: null })}
+          {cloneElement(labeledElement, { style: null })}
           {addonAfterNode}
         </span>
       </span>
     );
   }
 
-  renderTextAreaWithClearIcon(prefixCls: string, element: React.ReactElement<any>) {
-    const { value, allowClear, className, style } = this.props;
+  renderTextAreaWithClearIcon(prefixCls: string, element: React.ReactElement) {
+    const { value, allowClear, className, style, direction } = this.props;
     if (!allowClear) {
-      return React.cloneElement(element, {
+      return cloneElement(element, {
         value,
       });
     }
     const affixWrapperCls = classNames(
       className,
       `${prefixCls}-affix-wrapper`,
+      { [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl' },
       `${prefixCls}-affix-wrapper-textarea-with-clear-btn`,
     );
     return (
       <span className={affixWrapperCls} style={style}>
-        {React.cloneElement(element, {
+        {cloneElement(element, {
           style: null,
           value,
         })}
@@ -197,16 +201,12 @@ class ClearableLabeledInput extends React.Component<ClearableInputProps> {
     );
   }
 
-  renderClearableLabeledInput() {
+  render() {
     const { prefixCls, inputType, element } = this.props;
     if (inputType === ClearableInputType[0]) {
       return this.renderTextAreaWithClearIcon(prefixCls, element);
     }
     return this.renderInputWithLabel(prefixCls, this.renderLabeledIcon(prefixCls, element));
-  }
-
-  render() {
-    return this.renderClearableLabeledInput();
   }
 }
 

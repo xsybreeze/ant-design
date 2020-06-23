@@ -3,6 +3,7 @@ category: Components
 type: Data Entry
 cols: 2
 title: AutoComplete
+cover: https://gw.alipayobjects.com/zos/alicdn/qtJm4yt45/AutoComplete.svg
 ---
 
 Autocomplete function of input field.
@@ -34,6 +35,7 @@ When there is a need for autocomplete functionality.
 | defaultOpen | Initial open state of dropdown | boolean | - |  |
 | open | Controlled open state of dropdown | boolean | - |  |
 | onDropdownVisibleChange | Call when dropdown open | function(open) | - |  |
+| notFoundContent | Specify content to show when no result matches.. | string | 'Not Found' |  |
 
 ## Methods
 

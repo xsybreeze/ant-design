@@ -2,7 +2,7 @@ import React from 'react';
 import { mount, render } from 'enzyme';
 import Table from '..';
 import Checkbox from '../../checkbox';
-import { resetWarned } from '../../_util/warning';
+import { resetWarned } from '../../_util/devWarning';
 import ConfigProvider from '../../config-provider';
 
 describe('Table.rowSelection', () => {
@@ -286,23 +286,12 @@ describe('Table.rowSelection', () => {
     expect(handleSelectEven).toHaveBeenCalledWith([0, 1, 2, 3]);
   });
 
-  it('could hide default selection options', () => {
+  it('could hide selectAll checkbox and custom selection', () => {
     const rowSelection = {
-      hideDefaultSelections: true,
-      selections: [
-        {
-          key: 'odd',
-          text: '奇数项',
-        },
-        {
-          key: 'even',
-          text: '偶数项',
-        },
-      ],
+      hideSelectAll: true,
     };
     const wrapper = mount(createTable({ rowSelection }));
-    const dropdownWrapper = mount(wrapper.find('Trigger').instance().getComponent());
-    expect(dropdownWrapper.find('.ant-dropdown-menu-item').length).toBe(2);
+    expect(wrapper.find('.ant-selection').exists()).toBeFalsy();
   });
 
   it('handle custom selection onSelect correctly when hide default selection options', () => {
@@ -796,5 +785,29 @@ describe('Table.rowSelection', () => {
       .last()
       .simulate('change', { target: { checked: true } });
     expect(onChange.mock.calls[0][1]).toEqual([expect.objectContaining({ name: 'bamboo' })]);
+  });
+
+  it('do not cache selected keys', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+      <Table
+        dataSource={[{ name: 'light' }, { name: 'bamboo' }]}
+        rowSelection={{ onChange }}
+        rowKey="name"
+      />,
+    );
+
+    wrapper
+      .find('tbody input')
+      .first()
+      .simulate('change', { target: { checked: true } });
+    expect(onChange).toHaveBeenCalledWith(['light'], [{ name: 'light' }]);
+
+    wrapper.setProps({ dataSource: [{ name: 'bamboo' }] });
+    wrapper
+      .find('tbody input')
+      .first()
+      .simulate('change', { target: { checked: true } });
+    expect(onChange).toHaveBeenCalledWith(['bamboo'], [{ name: 'bamboo' }]);
   });
 });

@@ -3,6 +3,7 @@ category: Components
 subtitle: 数字输入框
 type: 数据录入
 title: InputNumber
+cover: https://gw.alipayobjects.com/zos/alicdn/XOS8qZ0kU/InputNumber.svg
 ---
 
 通过鼠标或键盘，输入范围内的数值。
@@ -23,10 +24,10 @@ title: InputNumber
 | formatter | 指定输入框展示值的格式 | function(value: number \| string): string |  |
 | max | 最大值 | number | Infinity |
 | min | 最小值 | number | -Infinity |
-| parser | 指定从 formatter 里转换回数字的方式，和 formatter 搭配使用 | function( string): number |  |
+| parser | 指定从 `formatter` 里转换回数字的方式，和 `formatter` 搭配使用 | function(string): number |  |
 | precision | 数值精度 | number |  |
 | decimalSeparator | 小数点 | string |  |
-| size | 输入框大小 | `large` \| `middle` \| `small` | 无 |
+| size | 输入框大小 | `large` \| `middle` \| `small` | - |
 | step | 每次改变步数，可以为小数 | number\|string | 1 |
 | value | 当前值 | number |  |
 | onChange | 变化回调 | Function(value: number \| string) |  |
