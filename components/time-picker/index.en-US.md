@@ -2,6 +2,7 @@
 category: Components
 type: Data Entry
 title: TimePicker
+cover: https://gw.alipayobjects.com/zos/alicdn/h04Zsl98I/TimePicker.svg
 ---
 
 To select/input a time.
@@ -18,6 +19,7 @@ By clicking the input box, you can select a time from a popup panel.
 
 ```jsx
 import moment from 'moment';
+
 <TimePicker defaultValue={moment('13:30:56', 'HH:mm:ss')} />;
 ```
 
@@ -40,9 +42,9 @@ import moment from 'moment';
 | inputReadOnly | Set the `readonly` attribute of the input tag (avoids virtual keyboard on touch devices) | boolean | false |  |
 | minuteStep | interval between minutes in picker | number | 1 |  |
 | open | whether to popup panel | boolean | false |  |
-| placeholder | display when there's no value | string | "Select a time" |  |
+| placeholder | display when there's no value | string \| \[string, string] | "Select a time" |  |
 | popupClassName | className of panel | string | - |  |
-| popupStyle | style of panel | object | - |  |
+| popupStyle | style of panel | CSSProperties | - |  |
 | secondStep | interval between seconds in picker | number | 1 |  |
 | suffixIcon | The custom suffix icon | ReactNode | - |  |
 | clearIcon | The custom clear icon | ReactNode | - |  |
@@ -67,7 +69,10 @@ Same props from [RangePicker](/components/date-picker/#RangePicker) of DatePicke
 | -------- | ------------------------ | ------- | ------- | ------- |
 | order    | Order start and end time | boolean | true    | 4.1.0   |
 
-<style>.code-box-demo .ant-picker { margin: 0 8px 12px 0; }</style>
+<style>
+.code-box-demo .ant-picker { margin: 0 8px 12px 0; }
+.ant-row-rtl .code-box-demo .ant-picker { margin: 0 0 12px 8px; }
+</style>
 
 ## FAQ
 

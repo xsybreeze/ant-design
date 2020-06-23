@@ -3,6 +3,7 @@ category: Components
 type: Feedback
 noinstant: true
 title: Message
+cover: https://gw.alipayobjects.com/zos/alicdn/hAkKTIW0K/Message.svg
 ---
 
 Display global messages as feedback in response to user operations.
@@ -55,6 +56,8 @@ The properties of config are as follows:
 | onClose | Specify a function that will be called when the message is closed | function | - |
 | icon | Customized Icon | ReactNode | - |
 | key | The unique identifier of the Message | string\|number | - |
+| className | Customized CSS class | string | - |
+| style | Customized inline style | [React.CSSProperties](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/e434515761b36830c3e58a970abf5186f005adac/types/react/index.d.ts#L794) | - |
 
 ### Global static methods
 
@@ -64,6 +67,10 @@ Methods for global configuration and destruction are also provided:
 - `message.destroy()`
 
 #### message.config
+
+> When you use `ConfigProvider` for global configuration, the system will automatically start RTL mode by default.(4.3.0+)
+>
+> When you want to use it alone, you can start the RTL mode through the following settings.
 
 ```js
 message.config({
@@ -80,4 +87,4 @@ message.config({
 | getContainer | Return the mount node for Message | () => HTMLElement | () => document.body |
 | maxCount | max message show, drop oldest if exceed limit | number | - |
 | top | distance from top | number | 24 |
-| rtl | whether to enable RTL mode | boolean | `false` |
+| rtl | whether to enable RTL mode | boolean | false |

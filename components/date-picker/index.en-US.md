@@ -2,6 +2,7 @@
 category: Components
 type: Data Entry
 title: DatePicker
+cover: https://gw.alipayobjects.com/zos/alicdn/RT_USzA48/DatePicker.svg
 ---
 
 To select or input a date.
@@ -23,7 +24,7 @@ There are five kinds of picker:
 
 ### Localization
 
-The default locale is en-US, if you need to use other languages, recommend to use internationalized components provided by us at the entrance. Look at: [ConfigProvider](http://ant.design/components/config-provider/).
+The default locale is en-US, if you need to use other languages, recommend to use internationalized components provided by us at the entrance. Look at: [ConfigProvider](https://ant.design/components/config-provider/).
 
 If there are special needs (only modifying single component language), Please use the property: local. Example: [default](https://github.com/ant-design/ant-design/blob/master/components/date-picker/locale/example.json).
 
@@ -58,12 +59,12 @@ The following APIs are shared by DatePicker, YearPicker, MonthPicker, RangePicke
 | mode | picker panel mode（[Cannot select year or month anymore?](/docs/react/faq#When-set-mode-to-DatePicker/RangePicker,-cannot-select-year-or-month-anymore?) | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |
 | open | open state of picker | boolean | - |  |
 | picker | Set picker type | `date` \| `week` \| `month` \| `quarter` (4.1.0) \| `year` | `date` |  |
-| placeholder | placeholder of date input | string\|RangePicker\[] | - |  |
-| popupStyle | to customize the style of the popup calendar | object | {} |  |
+| placeholder | placeholder of date input | string \| \[string,string] | - |  |
+| popupStyle | to customize the style of the popup calendar | CSSProperties | {} |  |
 | size | determine the size of the input box, the height of `large` and `small`, are 40px and 24px respectively, while default size is 32px | `large` \| `middle` \| `small` | - |  |
-| bordered | whether has border style | Boolean | true |  |
+| bordered | whether has border style | boolean | true |  |
 | suffixIcon | The custom suffix icon | ReactNode | - |  |
-| style | to customize the style of the input box | object | {} |  |
+| style | to customize the style of the input box | CSSProperties | {} |  |
 | onOpenChange | a callback function, can be executed whether the popup calendar is popped up or closed | function(open) | - |  |
 | onPanelChange | callback when picker panel mode is changed | function(value, mode) | - |  |
 | inputReadOnly | Set the `readonly` attribute of the input tag (avoids virtual keyboard on touch devices) | boolean | false |  |
@@ -144,14 +145,15 @@ Added in `4.1.0`.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | allowEmpty | Allow start or end input leave empty | \[boolean, boolean] | \[false, false] |  |
+| dateRender | Customize date cell. `info` argument is added in 4.3.0 | function(currentDate: moment, today: moment, info: { range: 'start' \| ''end }) => React.ReactNode | - |  |
 | defaultValue | to set default date | \[[moment](http://momentjs.com/), [moment](http://momentjs.com/)] | - |  |
 | defaultPickerValue | to set default picker date | \[[moment](http://momentjs.com/), [moment](http://momentjs.com/)\] | - |  |
-| disabled | disable start or end | [boolean, boolean] | - |  |
+| disabled | disable start or end | \[boolean, boolean] | - |  |
 | disabledTime | to specify the time that cannot be selected | function(dates: \[moment, moment], partial: `'start'|'end'`) | - |  |
 | format | to set the date format, refer to [moment.js](http://momentjs.com/). When an array is provided, all values are used for parsing and first value is used for formatting. | string \| string[] | "YYYY-MM-DD HH:mm:ss" |  |
 | ranges | preseted ranges for quick selection | { \[range: string]: [moment](http://momentjs.com/)\[] } \| { \[range: string]: () => [moment](http://momentjs.com/)\[] } | - |  |
 | renderExtraFooter | render extra footer in panel | () => React.ReactNode | - |  |
-| separator | set separator between inputs | string | '~' |  |
+| separator | set separator between inputs | string | `~` |  |
 | showTime | to provide an additional time selection | object\|boolean | [TimePicker Options](/components/time-picker/#API) |  |
 | showTime.defaultValue | to set default time of selected date, [demo](#components-date-picker-demo-disabled-date) | [moment](http://momentjs.com/)\[] | \[moment(), moment()] |  |
 | value | to set date | \[[moment](http://momentjs.com/), [moment](http://momentjs.com/)] | - |  |
@@ -162,10 +164,25 @@ Added in `4.1.0`.
 .code-box-demo .ant-picker {
   margin: 0 8px 12px 0;
 }
+.ant-row-rtl .code-box-demo .ant-picker {
+  margin: 0 0 12px 8px;
+}
 </style>
 
 ## FAQ
 
 - [When set mode to DatePicker/RangePicker, cannot select year or month anymore?](/docs/react/faq#When-set-mode-to-DatePicker/RangePicker,-cannot-select-year-or-month-anymore?)
 
-- [How to use DatePicker with customize date library like dayjs](/docs/react/replace-moment#DatePicker)
+- [How to use DatePicker with customize date library like dayjs?](/docs/react/replace-moment#DatePicker)
+
+- How to modify start day of week?
+
+  Please use correct [language](/docs/react/i18n) ([#5605](https://github.com/ant-design/ant-design/issues/5605)), or update moment `locale` config: https://codesandbox.io/s/moment-day-of-week-b24k5
+
+  ```js
+  moment.locale('en', {
+    week: {
+      dow: 1,
+    },
+  });
+  ```

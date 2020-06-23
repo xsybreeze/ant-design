@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import omit from 'omit.js';
 
 import { ConfigConsumerProps } from '../config-provider';
-import { withConfigConsumer } from '../config-provider/context';
+import { withConfigConsumer, ConfigConsumer } from '../config-provider/context';
 import { tuple } from '../_util/type';
 
 const DrawerContext = React.createContext<Drawer | null>(null);
@@ -136,12 +136,31 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
     }
   };
 
+  getOffsetStyle() {
+    const { placement, width, height, visible, mask } = this.props;
+    // https://github.com/ant-design/ant-design/issues/24287
+    if (!visible && !mask) {
+      return {};
+    }
+    const offsetStyle: any = {};
+    if (placement === 'left' || placement === 'right') {
+      offsetStyle.width = width;
+    } else {
+      offsetStyle.height = height;
+    }
+    return offsetStyle;
+  }
+
   getRcDrawerStyle = () => {
-    const { zIndex, placement, style } = this.props;
+    const { zIndex, placement, mask, style } = this.props;
     const { push } = this.state;
+    // 当无 mask 时，将 width 应用到外层容器上
+    // 解决 https://github.com/ant-design/ant-design/issues/12401 的问题
+    const offsetStyle = mask ? {} : this.getOffsetStyle();
     return {
       zIndex,
       transform: push ? this.getPushTransform(placement) : undefined,
+      ...offsetStyle,
       ...style,
     };
   };
@@ -234,55 +253,78 @@ class Drawer extends React.Component<DrawerProps & ConfigConsumerProps, IDrawerS
 
   // render Provider for Multi-level drawer
   renderProvider = (value: Drawer) => {
-    const { prefixCls, placement, className, width, height, mask, direction, ...rest } = this.props;
-    const haveMask = mask ? '' : 'no-mask';
     this.parentDrawer = value;
-    const offsetStyle: any = {};
-    if (placement === 'left' || placement === 'right') {
-      offsetStyle.width = width;
-    } else {
-      offsetStyle.height = height;
-    }
-    const drawerClassName = classNames(className, haveMask, {
-      [`${prefixCls}-rtl`]: direction === 'rtl',
-    });
+
     return (
-      <DrawerContext.Provider value={this}>
-        <RcDrawer
-          handler={false}
-          {...omit(rest, [
-            'zIndex',
-            'style',
-            'closable',
-            'destroyOnClose',
-            'drawerStyle',
-            'headerStyle',
-            'bodyStyle',
-            'footerStyle',
-            'footer',
-            'locale',
-            'title',
-            'push',
-            'visible',
-            'getPopupContainer',
-            'rootPrefixCls',
-            'getPrefixCls',
-            'renderEmpty',
-            'csp',
-            'pageHeader',
-            'autoInsertSpaceInButton',
-          ])}
-          {...offsetStyle}
-          prefixCls={prefixCls}
-          open={this.props.visible}
-          showMask={mask}
-          placement={placement}
-          style={this.getRcDrawerStyle()}
-          className={drawerClassName}
-        >
-          {this.renderBody()}
-        </RcDrawer>
-      </DrawerContext.Provider>
+      <ConfigConsumer>
+        {({ getPopupContainer, getPrefixCls }) => {
+          const {
+            prefixCls: customizePrefixCls,
+            placement,
+            className,
+            mask,
+            direction,
+            visible,
+            ...rest
+          } = this.props;
+
+          const prefixCls = getPrefixCls('select', customizePrefixCls);
+          const drawerClassName = classNames(className, {
+            'no-mask': !mask,
+            [`${prefixCls}-rtl`]: direction === 'rtl',
+          });
+          const offsetStyle = mask ? this.getOffsetStyle() : {};
+
+          return (
+            <DrawerContext.Provider value={this}>
+              <RcDrawer
+                handler={false}
+                {...omit(rest, [
+                  'zIndex',
+                  'style',
+                  'closable',
+                  'destroyOnClose',
+                  'drawerStyle',
+                  'headerStyle',
+                  'bodyStyle',
+                  'footerStyle',
+                  'footer',
+                  'locale',
+                  'title',
+                  'push',
+                  'visible',
+                  'getPopupContainer',
+                  'rootPrefixCls',
+                  'getPrefixCls',
+                  'renderEmpty',
+                  'csp',
+                  'pageHeader',
+                  'autoInsertSpaceInButton',
+                  'width',
+                  'height',
+                  'dropdownMatchSelectWidth',
+                  'getTargetContainer',
+                ])}
+                getContainer={
+                  // 有可能为 false，所以不能直接判断
+                  rest.getContainer === undefined && getPopupContainer
+                    ? () => getPopupContainer(document.body)
+                    : rest.getContainer
+                }
+                {...offsetStyle}
+                prefixCls={prefixCls}
+                open={visible}
+                showMask={mask}
+                placement={placement}
+                style={this.getRcDrawerStyle()}
+                className={drawerClassName}
+              >
+                {this.renderBody()}
+              </RcDrawer>
+            </DrawerContext.Provider>
+          );
+        }}
+      </ConfigConsumer>
     );
   };
 
